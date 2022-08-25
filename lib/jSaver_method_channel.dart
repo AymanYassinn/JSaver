@@ -4,9 +4,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:jsaver/jStatic.dart';
 import 'jSaver_platform_interface.dart';
+
 /// An implementation of [JSaverPlatform] that uses method channels.
 class MethodChannelJSaver extends JSaverPlatform {
-  /// The method channel used to interact with the native platform.
   @visibleForTesting
   final methodChannel = const MethodChannel(METHOD_CHANNEL);
 

@@ -9,9 +9,6 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 class MockJSaverPlatform
     with MockPlatformInterfaceMixin
     implements JSaverPlatform {
-
-
-
   @override
   Future<String> saveFileData(
       {required String fName, required Uint8List fData}) {
