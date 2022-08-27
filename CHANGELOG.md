@@ -1,3 +1,4 @@
-## 0.0.3
+## 0.0.4
 
-* Remove Platform Implementation
+* Remove Extra Content
+* Fix example

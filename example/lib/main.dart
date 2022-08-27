@@ -15,7 +15,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
+  String _savedFile = 'Unknown';
   final _jSaverPlugin = JSaver();
 
   @override
@@ -31,7 +31,7 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+          child: Text('Path: $_savedFile\n'),
         ),
         floatingActionButton: FloatingActionButton(onPressed: () async {
           await Permission.storage.request();
@@ -42,7 +42,7 @@ class _MyAppState extends State<MyApp> {
               if (file.path != null) {
                 final v = await _jSaverPlugin.saveFromPath(path: file.path!);
                 setState(() {
-                  _platformVersion = v;
+                  _savedFile = v;
                 });
                 debugPrint(v.toString());
               }
