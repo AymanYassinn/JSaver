@@ -3,17 +3,24 @@ import 'dart:typed_data';
 export 'package:jsaver/jStatic.dart';
 import 'package:jsaver/jStatic.dart';
 
-import 'jSaver_platform_interface.dart';
-
+/// [JSaver] IS the Main Class you Can Call it like
+/// ```dart
+/// final jSaver = JSaver();
+/// ```
+///or
+///``` dart
+///JSaver().method()
+///```
 class JSaver {
+  /// Save From File [saveFromFile] It Take [File] from dart:io and return [String] Path
+  /// Or It Can Return [String] ERROR From catch()
   Future<String> saveFromFile({required File file}) async {
     try {
       if (file.existsSync()) {
         final fData = toData(file);
         if (fData.isNotEmpty) {
           final fName = baseName(file.path);
-          return JSaverPlatform.instance
-              .saveFileData(fName: fName, fData: fData);
+          return await saveFileData(fName: fName, fData: fData);
         } else {
           return "Couldn't Read File Data";
         }
@@ -25,6 +32,8 @@ class JSaver {
     }
   }
 
+  /// Save From Path [saveFromPath]  It Takes [String] Path Return [String] Path
+  /// Or It Can Return [String] ERROR From catch()
   Future<String> saveFromPath({required String path}) async {
     try {
       if (path.isNotEmpty) {
@@ -33,8 +42,7 @@ class JSaver {
           final fData = toData(value);
           if (fData.isNotEmpty) {
             final fName = baseName(path);
-            return JSaverPlatform.instance
-                .saveFileData(fName: fName, fData: fData);
+            return await saveFileData(fName: fName, fData: fData);
           } else {
             return "Couldn't Read File Data";
           }
@@ -49,14 +57,13 @@ class JSaver {
     }
   }
 
+  /// Save From Data [saveFromData] It Takes [Uint8List] data and [String] name Return [String] Path
+  /// Or It Can Return [String] ERROR From catch()
   Future<String> saveFromData(
-      {required Uint8List data,
-      required String name,
-      String customType = ''}) async {
+      {required Uint8List data, required String name}) async {
     try {
-      //String fType = fromTypes(type).isNotEmpty ? fromTypes(type) : customType;
       if (data.isNotEmpty && name.isNotEmpty) {
-        return JSaverPlatform.instance.saveFileData(fName: name, fData: data);
+        return await saveFileData(fName: name, fData: data);
       } else {
         return "Check File , Name Or Type";
       }

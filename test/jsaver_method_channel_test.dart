@@ -2,10 +2,10 @@ import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:jsaver/jsaver_method_channel.dart';
+import 'package:jsaver/jSaver.dart';
 
 void main() {
-  MethodChannelJSaver platform = MethodChannelJSaver();
+  final platform = JSaver();
   const MethodChannel channel = MethodChannel('jsaver');
 
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -21,6 +21,6 @@ void main() {
   });
 
   test('getPlatformVersion', () async {
-    expect(await platform.saveFileData(fName: "", fData: Uint8List(10)), '42');
+    expect(await platform.saveFromData(name: "", data: Uint8List(10)), '42');
   });
 }
