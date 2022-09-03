@@ -1,16 +1,21 @@
 name: jsaver
-description: Save Files Plugin By Just Codes Developers, JSaver is a plugin that save files in internal or external directories for android.
-version: 0.0.4
+description: Save Files Plugin By Just Codes Developers, JSaver is a plugin that save files in internal or external directories for Android , Windows and Web.
+version: 0.0.5
 homepage: https://github.com/AymanYassinn/
 repository: https://github.com/AymanYassinn/JSaver
 
 environment:
-  sdk: ">=2.17.6 <3.0.0"
+  sdk: '>=2.18.0 <3.0.0'
   flutter: ">=2.5.0"
 
 dependencies:
   flutter:
     sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
+  plugin_platform_interface: ^2.0.2
+  ffi: ^2.0.1
+  path: ^1.8.2
 
 dev_dependencies:
   flutter_test:
@@ -18,10 +23,14 @@ dev_dependencies:
   flutter_lints: ^2.0.0
 
 flutter:
-
   plugin:
     platforms:
       android:
         package: com.jucodes.jsaver
         pluginClass: JSaverPlugin
+      windows:
+        default_package: jsaver
+      web:
+        pluginClass: JSaverWeb
+        fileName:  _web/jSaver_web.dart
 

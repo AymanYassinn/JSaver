@@ -1,6 +1,6 @@
 # jsaver
 
-JSaver: is a plugin that save files in internal or external directories for android.
+JSaver: is a plugin that save files in internal or external directories for android , web and Windows.
 
 ## Features
 
@@ -11,9 +11,23 @@ JSaver: is a plugin that save files in internal or external directories for andr
 ## Usage
 To Use `jsaver`
 
+#Android
 Minimal SDK VERSION
 ```groovy
 minSdkVersion 19
+```
+#Web
+The Only Method Works For Web.
+```dart
+
+final _jSaverPlugin = JSaver();
+
+Future<String> getFromData(Uint8List data, String fileName)async{
+  //Note: File Name Must Contain extension
+  final value = await _jSaverPlugin.saveFromData(data: data, name: fileName);
+return value;
+}
+
 ```
 ## Simple Usage
 
@@ -41,5 +55,3 @@ Future<String> getFromFile(File file)async{
 ## Additional information
 
 Provided By [Just Codes Developers](https://jucodes.com/)
-"# JSaver" 
-

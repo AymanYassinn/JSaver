@@ -1,24 +1,41 @@
+import 'dart:io';
+
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:jsaver/jsaver.dart';
+import 'package:jsaver/jSaver.dart';
+import 'package:jsaver/jsaver_platform_interface.dart';
 
-class MockJSaverPlatform {
-  Future<String> saveFileData(
-      {required String fName, required Uint8List fData}) {
-    // TODO: implement saveFileData
+import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+
+class MockJsaverPlatform
+    with MockPlatformInterfaceMixin
+    implements JSaverPlatform {
+  @override
+  Future<String> saveFromData(
+      {required Uint8List data,
+      required String name,
+      FileType type = FileType.OTHER}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> saveFromFile({required File file}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> saveFromPath({required String path}) {
     throw UnimplementedError();
   }
 }
 
 void main() {
-  final initialPlatform = JSaver();
-
-  test('$initialPlatform is the default instance', () {});
-
   test('getPlatformVersion', () async {
     JSaver jsaverPlugin = JSaver();
+    MockJsaverPlatform fakePlatform = MockJsaverPlatform();
+    JSaverPlatform.instance = fakePlatform;
 
-    expect(await jsaverPlugin.saveFromPath(path: ""), '42');
+    expect(await jsaverPlugin.saveFromPath(path: "path"), '42');
   });
 }
