@@ -28,6 +28,14 @@ class MockJsaverPlatform
   Future<String> saveFromPath({required String path}) {
     throw UnimplementedError();
   }
+
+  @override
+  Future<String> saveListOfFiles(
+      {List<String> paths = const [],
+      List<File> files = const [],
+      List<FilesModel> dataList = const []}) {
+    throw UnimplementedError();
+  }
 }
 
 void main() {

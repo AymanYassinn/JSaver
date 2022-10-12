@@ -1,8 +1,5 @@
 package com.jucodes.jsaver
-
-import androidx.annotation.NonNull
 import io.flutter.Log
-
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -21,24 +18,31 @@ class JSaverPlugin: FlutterPlugin, ActivityAware, MethodCallHandler {
   private val tag: String = "JSaver"
   private lateinit var channel : MethodChannel
 
-  override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+  override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     pluginBinding = flutterPluginBinding
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "JSAVER")
     channel.setMethodCallHandler(this)
   }
 
-  override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
+  override fun onMethodCall(call: MethodCall, result: Result) {
     if (jFileProvider == null) {
       initJFileProvider()
     }
     try {
       this.result = result
-      if (call.method == "SaveFile") {
-          val name = call.argument<String>("name")
-          val data = call.argument<ByteArray>("data")
-          jFileProvider!!.openFileManager(name!! , data, result)
-      } else {
-        result.notImplemented()
+      when (call.method) {
+          "SaveFile" -> {
+            val name = call.argument<String>("name")
+            val data = call.argument<ByteArray>("data")
+            jFileProvider!!.openFileManager(name!! , data, result)
+          }
+          "SaveFileList" -> {
+            val dataList = call.arguments<List<Map<String,Any>>>()
+            jFileProvider!!.openListFileManager(dataList!!,result)
+          }
+          else -> {
+            result.notImplemented()
+          }
       }
     }  catch (e: Exception) {
       Log.d(tag,  e.message.toString())
@@ -46,7 +50,7 @@ class JSaverPlugin: FlutterPlugin, ActivityAware, MethodCallHandler {
 
   }
 
-  override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+  override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
     pluginBinding = null
     if(jFileProvider!=null) {
       activity?.removeActivityResultListener(jFileProvider!!)

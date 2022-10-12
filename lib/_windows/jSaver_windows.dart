@@ -11,7 +11,7 @@ import 'package:path/path.dart';
 ///[String] method [_fileNameCC] that takes the [String] fileName
 /// return checked Value
 String _fileNameCC(String fileName) {
-  if (fileName.contains(RegExp(r'[<>:\/\\|?*"]'))) {
+  if (fileName.contains(RegExp(r'''[<>:\/\\|?*"]'''))) {
     return "";
   } else {
     return fileName;
@@ -167,6 +167,75 @@ class JSaverWindows extends JSaverPlatform {
     }
   }
 
+  ///[Future] method [saveListOfFiles]
+  ///takes the [List] of [String] paths ,  and [List] of [File] files
+  ///and [List] of [FilesModel] dataList
+  /// has [String] return Value
+  @override
+  Future<String> saveListOfFiles(
+      {List<String> paths = const [],
+      List<File> files = const [],
+      List<FilesModel> dataList = const []}) async {
+    if (paths.isEmpty && files.isEmpty && dataList.isEmpty) {
+      return "";
+    } else {
+      List<FilesModel> dataListLocal = [];
+      List<String> dataListError = [];
+      for (var i in paths) {
+        final file = File(i);
+        if (file.existsSync()) {
+          final data = file.readAsBytesSync();
+          if (data.isNotEmpty) {
+            final fM = FilesModel(fPath: _baseName(i), fData: data);
+            dataListLocal.add(fM);
+          } else {
+            dataListError.add(i);
+          }
+        } else {
+          dataListError.add(i);
+        }
+      }
+      for (var i in files) {
+        if (i.existsSync()) {
+          final data = i.readAsBytesSync();
+          if (data.isNotEmpty) {
+            final fM = FilesModel(fPath: _baseName(i.path), fData: data);
+            dataListLocal.add(fM);
+          } else {
+            dataListError.add(i.path);
+          }
+        } else {
+          dataListError.add(i.path);
+        }
+      }
+      for (var i in dataList) {
+        if (i.data.isNotEmpty) {
+          final fM = FilesModel(fPath: _baseName(i.path), fData: i.data);
+          dataListLocal.add(fM);
+        } else {
+          dataListError.add("Element Is Empty");
+        }
+      }
+      if (dataListLocal.isNotEmpty) {
+        List<String> aValList = [];
+        final fType = _baseType(dataListLocal.first.path);
+        final aVal1 = await _saveFile(fileName: dataListLocal.first.path);
+        if (aVal1.isNotEmpty && aVal1.endsWith(fType)) {
+          final aVal3 =
+              aVal1.substring(0, aVal1.lastIndexOf(Platform.pathSeparator) + 1);
+          for (var i in dataListLocal) {
+            final fF = File(aVal3 + i.path);
+            fF.writeAsBytesSync(i.data);
+            aValList.add(fF.path);
+          }
+        }
+        return aValList.toString();
+      } else {
+        return dataListError.toString();
+      }
+    }
+  }
+
   Future<String> _saveFile({
     required String fileName,
     FileType type = FileType.WINDOWS_FILE,
@@ -177,7 +246,7 @@ class JSaverWindows extends JSaverPlatform {
             'GetSaveFileNameW');
 
     final Pointer<OPENFILENAMEW> openFileNameW = _instantiateOpenFileNameW(
-      defaultFileName: fileName,
+      defaultFileName: fileName.isEmpty ? "file" : fileName,
       type: type,
     );
 

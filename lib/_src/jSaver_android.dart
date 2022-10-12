@@ -8,6 +8,7 @@ const String _METHOD_CHANNEL = "JSAVER";
 
 ///[String] MethodName [_SAVE_FILE]
 const String _SAVE_FILE = "SaveFile";
+const String _SAVE_FILE_LIST = "SaveFileList";
 
 class JSaverAndroid extends JSaverPlatform {
   ///[String] method [_baseName] that takes the [String] path and return the name
@@ -108,6 +109,86 @@ class JSaverAndroid extends JSaverPlatform {
       return vPath;
     } else {
       return "Check Permissions";
+    }
+  }
+
+  ///[Future] method [saveListOfFiles]
+  ///takes the [List] of [String] paths ,  and [List] of [File] files
+  ///and [List] of [FilesModel] dataList
+  /// has [String] return Value
+  @override
+  Future<String> saveListOfFiles(
+      {List<String> paths = const [],
+      List<File> files = const [],
+      List<FilesModel> dataList = const []}) async {
+    if (paths.isEmpty && files.isEmpty && dataList.isEmpty) {
+      return "";
+    } else {
+      List<FilesModel> dataListLocal = [];
+      List<String> dataListError = [];
+      for (var i in paths) {
+        final file = File(i);
+        if (file.existsSync()) {
+          final data = file.readAsBytesSync();
+          if (data.isNotEmpty) {
+            final fM = FilesModel(fPath: _baseName(i), fData: data);
+            dataListLocal.add(fM);
+          } else {
+            dataListError.add(i);
+          }
+        } else {
+          dataListError.add(i);
+        }
+      }
+      for (var i in files) {
+        if (i.existsSync()) {
+          final data = i.readAsBytesSync();
+          if (data.isNotEmpty) {
+            final fM = FilesModel(fPath: _baseName(i.path), fData: data);
+            dataListLocal.add(fM);
+          } else {
+            dataListError.add(i.path);
+          }
+        } else {
+          dataListError.add(i.path);
+        }
+      }
+      for (var i in dataList) {
+        if (i.data.isNotEmpty) {
+          final fM = FilesModel(fPath: _baseName(i.path), fData: i.data);
+          dataListLocal.add(fM);
+        } else {
+          dataListError.add("Element Is Empty");
+        }
+      }
+      if (dataListLocal.isNotEmpty) {
+        final aVal = await _saveListFileData(dataList: dataListLocal);
+        return aVal.toString();
+      } else {
+        return dataListError.toString();
+      }
+    }
+  }
+
+  ///[Future] method [_saveListFileData]
+  ///takes [List] of [FilesModel] dataList
+  ///Call [MethodChannel] and [invokeMethod] that has [List] of [String] return Value
+  Future<List<String>> _saveListFileData(
+      {List<FilesModel> dataList = const []}) async {
+    List<Map<dynamic, dynamic>> list = [];
+    for (var i in dataList) {
+      list.add(i.toMap());
+    }
+    if (list.isNotEmpty) {
+      final vPath =
+          await methodChannel.invokeListMethod<String>(_SAVE_FILE_LIST, list);
+      if (vPath != null) {
+        return vPath;
+      } else {
+        return [];
+      }
+    } else {
+      return [];
     }
   }
 }

@@ -61,6 +61,13 @@ class _MyAppState extends State<MyApp> {
               },
               child: const Icon(Icons.web),
             ),
+            FloatingActionButton(
+              heroTag: '4',
+              onPressed: () async {
+                await savedFileList();
+              },
+              child: const Icon(Icons.list),
+            ),
           ],
         ),
       ),
@@ -117,6 +124,33 @@ class _MyAppState extends State<MyApp> {
           });
           debugPrint(v.toString());
         }
+      }
+    }
+  }
+
+  savedFileList() async {
+    await Permission.storage.request();
+    final val = await FilePicker.platform.pickFiles(allowMultiple: true);
+    if (val != null) {
+      if (val.paths.isNotEmpty || val.files.isNotEmpty) {
+        List<String> paths = [];
+        List<File> files = [];
+        for (var i in val.paths) {
+          if (i != null) {
+            paths.add(i);
+          }
+        }
+        for (var i in val.files) {
+          if (i.path != null) {
+            files.add(File(i.path!));
+          }
+        }
+        final v =
+            await _jSaverPlugin.saveListOfFiles(paths: paths, files: files);
+        setState(() {
+          _savedFile = v;
+        });
+        debugPrint(v.toString());
       }
     }
   }

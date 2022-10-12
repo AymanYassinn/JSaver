@@ -31,4 +31,16 @@ class JSaver {
     return JSaverPlatform.instance
         .saveFromData(data: data, name: name, type: type);
   }
+
+  ///[Future] method [saveListOfFiles]
+  ///takes the [List] of [String] paths ,  and [List] of [File] files
+  ///and [List] of [FilesModel] dataList
+  /// has [String] return Value
+  Future<String> saveListOfFiles(
+      {List<String> paths = const [],
+      List<File> files = const [],
+      List<FilesModel> dataList = const []}) async {
+    return JSaverPlatform.instance
+        .saveListOfFiles(paths: paths, files: files, dataList: dataList);
+  }
 }

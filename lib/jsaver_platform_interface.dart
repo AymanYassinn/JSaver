@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -173,6 +174,30 @@ String getType(FileType type) {
   }
 }
 
+Uint8List stringToUnit8(String str) => Uint8List.fromList(str.codeUnits);
+
+class FilesModel {
+  static const IDD = "01";
+  static const BYTES = "02";
+  String fPath = '';
+  Uint8List fData = stringToUnit8("");
+  String get path => fPath;
+  Uint8List get data => fData;
+  FilesModel({required this.fData, this.fPath = ''});
+  FilesModel.fromMap(var data) {
+    fPath = data[IDD].toString();
+    fData = data[BYTES];
+  }
+  toMap() => {
+        IDD: fPath,
+        BYTES: fData,
+      };
+  @override
+  String toString() {
+    return json.encode(toMap());
+  }
+}
+
 abstract class JSaverPlatform extends PlatformInterface {
   /// Constructs a JSaverPlatform.
   JSaverPlatform() : super(token: _token);
@@ -210,6 +235,7 @@ abstract class JSaverPlatform extends PlatformInterface {
   ///takes the [File] file from dart:io
   ///return [String] value the path of savedFile
   /// Or It Can return [String] ERROR From catch()
+
   Future<String> saveFromFile({required File file}) async =>
       throw UnimplementedError('saveFromFile() has not been implemented.');
 
@@ -228,4 +254,14 @@ abstract class JSaverPlatform extends PlatformInterface {
           required String name,
           FileType type = FileType.OTHER}) async =>
       throw UnimplementedError('saveFromData() has not been implemented.');
+
+  ///[Future] method [saveListOfFiles]
+  ///takes the [List] of [String] paths ,  and [List] of [File] files
+  ///and [List] of [FilesModel] dataList
+  /// has [String] return Value
+  Future<String> saveListOfFiles(
+          {List<String> paths = const [],
+          List<File> files = const [],
+          List<FilesModel> dataList = const []}) async =>
+      throw UnimplementedError('saveListOfFiles() has not been implemented.');
 }

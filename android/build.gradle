@@ -44,3 +44,7 @@ android {
         minSdkVersion 19
     }
 }
+
+dependencies {
+    implementation 'androidx.documentfile:documentfile:1.0.1'
+}

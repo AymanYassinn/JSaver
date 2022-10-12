@@ -46,7 +46,6 @@ class JSaverWeb extends JSaverPlatform {
       required String name,
       FileType type = FileType.OTHER}) async {
     try {
-      //final ty = name.substring(name.lastIndexOf(".") + 1).toUpperCase();
       final wVal = await _webSaver(data, name, "application/octet-stream");
       return wVal.toString();
     } catch (e) {
