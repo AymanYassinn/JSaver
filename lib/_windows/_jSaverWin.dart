@@ -198,13 +198,15 @@ class JSaverWindows extends JSaver {
             aVal1 = await _saveFile(fileName: fSourceList.first.valueName);
           }
           final fType = _baseType(fSourceList.first.valueName);
-          if (aVal1.isNotEmpty && aVal1.endsWith(fType)) {
-            final aVal3 = aVal1.substring(
-                0, aVal1.lastIndexOf(Platform.pathSeparator) + 1);
+          if (aVal1.isNotEmpty) {
+            final aVal3 = aVal1.endsWith(fType)
+                ? aVal1.substring(
+                    0, aVal1.lastIndexOf(Platform.pathSeparator) + 1)
+                : aVal1;
             for (var i in fSourceList) {
               final fF = File(joinPath(aVal3, i.valueName));
               fF.writeAsBytesSync(i.data!);
-              successList.add(FilesModel(i.valueName, i.value));
+              successList.add(FilesModel(i.valueName, fF.path));
             }
           }
           return successList;

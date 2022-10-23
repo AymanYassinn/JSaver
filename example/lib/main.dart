@@ -191,7 +191,8 @@ class _MyAppState extends State<MyApp> {
           fromFiles: files,
           fromPaths: paths,
           fromDataList: filesData,
-          toDirectory: "/storage/emulated/0/Example/Example1/Example2/Example3",
+          // toDirectory: "D:/NewFolder/Folder",
+          toDirectory: "/storage/emulated/0/TargetFolder",
           androidPathOptions: AndroidPathOptions(
             cleanCache: true,
             toDefaultDirectory: false,

@@ -1,3 +1,5 @@
+## 1.1.1
+* Hot fix
 ## 1.1.0
  Breaking Changes
 * Remove path dependency
