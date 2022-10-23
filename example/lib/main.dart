@@ -19,7 +19,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _savedFile = 'Unknown';
-  final _jSaverPlugin = JSaver();
+  final _jSaverPlugin = JSaver.instance;
 
   @override
   void initState() {
@@ -34,7 +34,7 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Text('Path: $_savedFile\n'),
+          child: Text('$_savedFile\n'),
         ),
         floatingActionButton: Column(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -43,30 +43,94 @@ class _MyAppState extends State<MyApp> {
             FloatingActionButton(
               heroTag: '1',
               onPressed: () async {
-                await savedAndroid();
-              },
-              child: const Icon(Icons.android),
-            ),
-            FloatingActionButton(
-              heroTag: '2',
-              onPressed: () async {
-                await savedWindows();
-              },
-              child: const Icon(Icons.desktop_windows),
-            ),
-            FloatingActionButton(
-              heroTag: '3',
-              onPressed: () async {
                 await savedWeb();
               },
               child: const Icon(Icons.web),
             ),
             FloatingActionButton(
+              heroTag: '2',
+              onPressed: () async {
+                await Permission.storage.request();
+                final val = await _jSaverPlugin.grantAccessToDirectory();
+                debugPrint(val.toString());
+                setState(() {
+                  _savedFile = val.toString();
+                });
+              },
+              child: const Icon(Icons.lock_open),
+            ),
+            FloatingActionButton(
+              heroTag: '3',
+              onPressed: () async {
+                await Permission.storage.request();
+                final val = await _jSaverPlugin.getAccessedDirectories();
+                for (var i in val) {
+                  debugPrint(i.toString());
+                }
+                setState(() {
+                  _savedFile = val.first.toString();
+                });
+              },
+              child: const Icon(Icons.storage),
+            ),
+            FloatingActionButton(
               heroTag: '4',
               onPressed: () async {
-                await savedFileList();
+                final val = await _jSaverPlugin.setDefaultSavingDirectory();
+                debugPrint(val.toString());
+                setState(() {
+                  _savedFile = val.toString();
+                });
               },
-              child: const Icon(Icons.list),
+              child: const Icon(Icons.maps_home_work),
+            ),
+            FloatingActionButton(
+              heroTag: '5',
+              onPressed: () async {
+                final val = await _jSaverPlugin.getDefaultSavingDirectory();
+                debugPrint(val.toString());
+                setState(() {
+                  _savedFile = val.toString();
+                });
+              },
+              child: const Icon(Icons.home),
+            ),
+            FloatingActionButton(
+              heroTag: '6',
+              onPressed: () async {
+                final val = await saveAll();
+                if (val.isNotEmpty) {
+                  for (var i in val) {
+                    debugPrint(i.toString());
+                  }
+                  setState(() {
+                    _savedFile = val.first.toString();
+                  });
+                }
+              },
+              child: const Icon(Icons.save),
+            ),
+            FloatingActionButton(
+              heroTag: '6',
+              onPressed: () async {
+                final val = await _jSaverPlugin.getCacheDirectory();
+                debugPrint(val.toString());
+                setState(() {
+                  _savedFile = val.toString();
+                });
+              },
+              child: const Icon(Icons.cached_sharp),
+            ),
+            FloatingActionButton(
+              heroTag: '7',
+              onPressed: () async {
+                final val = await _jSaverPlugin.cleanApplicationCache();
+                debugPrint(val.toString());
+                setState(() {
+                  _savedFile = val.toString();
+                });
+              },
+              child: const Icon(Icons.cleaning_services),
             ),
           ],
         ),
@@ -94,64 +158,51 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  savedWindows() async {
-    final val = await FilePicker.platform.pickFiles(allowMultiple: false);
-    if (val != null) {
-      if (val.files.isNotEmpty) {
-        final file = val.files.first;
-        if (file.path != null) {
-          final file2 = File(file.path!);
-          final v = await _jSaverPlugin.saveFromFile(file: file2);
-          setState(() {
-            _savedFile = v;
-          });
-          debugPrint(v.toString());
-        }
-      }
-    }
-  }
-
-  savedAndroid() async {
-    await Permission.storage.request();
-    final val = await FilePicker.platform.pickFiles(allowMultiple: false);
-    if (val != null) {
-      if (val.files.isNotEmpty) {
-        final file = val.files.first;
-        if (file.path != null) {
-          final v = await _jSaverPlugin.saveFromPath(path: file.path!);
-          setState(() {
-            _savedFile = v;
-          });
-          debugPrint(v.toString());
-        }
-      }
-    }
-  }
-
-  savedFileList() async {
+  Future<List<FilesModel>> saveAll() async {
     await Permission.storage.request();
     final val = await FilePicker.platform.pickFiles(allowMultiple: true);
     if (val != null) {
       if (val.paths.isNotEmpty || val.files.isNotEmpty) {
         List<String> paths = [];
         List<File> files = [];
+        List<FilesModel> filesData = [];
         for (var i in val.paths) {
           if (i != null) {
             paths.add(i);
+            //  filesData.add(FilesModel(fPath: i));
           }
         }
         for (var i in val.files) {
           if (i.path != null) {
-            files.add(File(i.path!));
+            final vF = File(i.path!);
+            files.add(vF);
+
+            filesData.add(FilesModel(
+                vF.path
+                    .substring(vF.path.lastIndexOf(Platform.pathSeparator) + 1),
+                "",
+                vF.readAsBytesSync()));
           }
         }
-        final v =
-            await _jSaverPlugin.saveListOfFiles(paths: paths, files: files);
-        setState(() {
-          _savedFile = v;
-        });
-        debugPrint(v.toString());
+        final v = await _jSaverPlugin.save(
+          fromPath: paths.first,
+          fromFile: files.first,
+          fromData: filesData.first,
+          fromFiles: files,
+          fromPaths: paths,
+          fromDataList: filesData,
+          toDirectory: "/storage/emulated/0/Example/Example1/Example2/Example3",
+          androidPathOptions: AndroidPathOptions(
+            cleanCache: true,
+            toDefaultDirectory: false,
+          ),
+        );
+        return v;
+      } else {
+        return [];
       }
+    } else {
+      return [];
     }
   }
 }

@@ -6,15 +6,15 @@
 import 'dart:html';
 import 'dart:typed_data';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
-import 'package:jsaver/jsaver_platform_interface.dart';
+import 'package:jsaver/jSaver.dart';
 
 /// A web implementation of the JSaverPlatform of the JSaver plugin.
-class JSaverWeb extends JSaverPlatform {
+class JSaverWeb extends JSaver {
   /// Constructs a JSaverWeb
   JSaverWeb();
 
   static void registerWith(Registrar registrar) {
-    JSaverPlatform.instance = JSaverWeb();
+    JSaver.instance = JSaverWeb();
   }
 
   ///[Future] method [_webSaver]

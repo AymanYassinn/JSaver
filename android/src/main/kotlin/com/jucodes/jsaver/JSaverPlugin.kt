@@ -9,13 +9,13 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 
 /** JSaverPlugin */
+private const val TAG = "JSaverProvider"
 class JSaverPlugin: FlutterPlugin, ActivityAware, MethodCallHandler {
-  private var jFileProvider: JFileProvider? = null
+  private var jSaverProvider: JSaverProvider? = null
   private var activity: ActivityPluginBinding? = null
   private var pluginBinding: FlutterPlugin.FlutterPluginBinding? = null
 
   private var result: Result? = null
-  private val tag: String = "JSaver"
   private lateinit var channel : MethodChannel
 
   override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
@@ -25,36 +25,64 @@ class JSaverPlugin: FlutterPlugin, ActivityAware, MethodCallHandler {
   }
 
   override fun onMethodCall(call: MethodCall, result: Result) {
-    if (jFileProvider == null) {
-      initJFileProvider()
+    if (jSaverProvider == null) {
+      initJSaverProvider()
     }
+
     try {
       this.result = result
       when (call.method) {
-          "SaveFile" -> {
-            val name = call.argument<String>("name")
-            val data = call.argument<ByteArray>("data")
-            jFileProvider!!.openFileManager(name!! , data, result)
+        "ClearCache" -> {
+          jSaverProvider!!.clearCacheDirectory(result)
+        }
+           "SetDefaultPath" -> {
+            jSaverProvider!!.setDefaultDirectory(result)
           }
-          "SaveFileList" -> {
-            val dataList = call.arguments<List<Map<String,Any>>>()
-            jFileProvider!!.openListFileManager(dataList!!,result)
+           "GetDefaultPath" -> {
+           jSaverProvider!!.getDefaultDirectory(result)
+          }
+          "SaverMain" -> {
+            val toDefault = call.argument<Boolean>("default")
+            val cleanCache = call.argument<Boolean>("cleanCache")
+            val toDirectory = call.argument<String>("directory")
+            val dataList = call.argument<List<Map<String,Any>>>("dataList")
+            var fDirectory = ""
+            if(toDefault == true){
+              val de = jSaverProvider!!.getLDefaultDirectory()
+              if(de != null){
+                fDirectory = de
+              }
+            }
+            if(toDirectory != null && toDirectory.isNotEmpty()){
+              fDirectory = toDirectory
+            }
+            jSaverProvider!!.saveMain(dataList!!,fDirectory,cleanCache!!,result)
+          }
+          "GetCashDirectory" -> {
+            jSaverProvider!!.getCacheDirectory(result)
+          }
+          "SetAccessDirectory" -> {
+          jSaverProvider!!.setAccessToDirectory(result)
+          }
+          "GetAccessedDirectories" -> {
+          jSaverProvider!!.getAccessedDirectories(result)
+
           }
           else -> {
             result.notImplemented()
           }
       }
     }  catch (e: Exception) {
-      Log.d(tag,  e.message.toString())
+      Log.e(TAG, e.toString())
     }
 
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
     pluginBinding = null
-    if(jFileProvider!=null) {
-      activity?.removeActivityResultListener(jFileProvider!!)
-      jFileProvider = null
+    if(jSaverProvider!=null) {
+      activity?.removeActivityResultListener(jSaverProvider!!)
+      jSaverProvider = null
     }
     channel.setMethodCallHandler(null)
   }
@@ -64,29 +92,28 @@ class JSaverPlugin: FlutterPlugin, ActivityAware, MethodCallHandler {
   }
 
   override fun onDetachedFromActivityForConfigChanges() {
-    if (jFileProvider != null) {
-      activity?.removeActivityResultListener(jFileProvider!!)
-      jFileProvider = null
+    if (jSaverProvider != null) {
+      activity?.removeActivityResultListener(jSaverProvider!!)
+      jSaverProvider = null
     }
     activity = null
   }
 
   override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
-
     this.activity = binding
   }
 
   override fun onDetachedFromActivity() {
-    if (jFileProvider != null) {
-      activity?.removeActivityResultListener(jFileProvider!!)
-      jFileProvider = null
+    if (jSaverProvider != null) {
+      activity?.removeActivityResultListener(jSaverProvider!!)
+      jSaverProvider = null
     }
     activity = null
   }
-  private fun initJFileProvider(): Boolean {
-    var jProvider: JFileProvider? = null
+  private fun initJSaverProvider(): Boolean {
+    var jProvider: JSaverProvider? = null
     if (activity != null) {
-      jProvider = JFileProvider(
+      jProvider = JSaverProvider(
         activity = activity!!.activity
       )
       activity!!.addActivityResultListener(jProvider)
@@ -94,7 +121,7 @@ class JSaverPlugin: FlutterPlugin, ActivityAware, MethodCallHandler {
       if (result != null)
         result?.error("NullActivity", "Activity was Null", null)
     }
-    this.jFileProvider = jProvider
+    this.jSaverProvider = jProvider
     return jProvider != null
   }
 }

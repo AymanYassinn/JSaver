@@ -1,46 +1,336 @@
+import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
-import 'jsaver_platform_interface.dart';
 
-class JSaver {
-  ///[Future] method [saveFromFile]
-  ///takes the [File] file from dart:io
-  ///return [String] value the path of savedFile
-  /// Or It Can return [String] ERROR From catch()
-  Future<String> saveFromFile({required File file}) async {
-    return JSaverPlatform.instance.saveFromFile(file: file);
+import 'package:flutter/foundation.dart';
+import 'package:jsaver/_src/_jSaverAndroid.dart';
+import 'package:jsaver/_windows/_jStud.dart'
+    if (dart.library.io) 'package:jsaver/_windows/_jSaverWin.dart';
+import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+
+enum FileType {
+  ///[WINDOWS_FILE] for .all extensions
+  WINDOWS_FILE,
+
+  ///[WINDOWS_VIDEO] for .videos extensions
+  WINDOWS_VIDEO,
+
+  ///[WINDOWS_IMAGE] for .images extensions
+  WINDOWS_IMAGE,
+
+  ///[WINDOWS_MEDIA] for .allMedia extensions
+  WINDOWS_MEDIA,
+
+  ///[WINDOWS_AUDIO] for .audio extensions
+  WINDOWS_AUDIO,
+
+  ///[AVI] for .avi extension
+  AVI,
+
+  ///[BMP] for .bmp extension
+  BMP,
+
+  ///[EPUB] for .epub extention
+  EPUB,
+
+  ///[GIF] for .gif extension
+  GIF,
+
+  ///[JSON] for .json extension
+  JSON,
+
+  ///[MPEG] for .mpeg extension
+  MPEG,
+
+  ///[MP3] for .mp3 extension
+  MP3,
+
+  ///[OTF] for .otf extension
+  OTF,
+
+  ///[PNG] for .png extension
+  PNG,
+
+  ///[ZIP] for .zip extension
+  ZIP,
+
+  ///[TTF] for .ttf extension
+  TTF,
+
+  ///[RAR] for .rar extension
+  RAR,
+
+  ///[JPEG] for .jpeg extension
+  JPEG,
+
+  ///[AAC] for .aac extension
+  AAC,
+
+  ///[PDF] for .pdf extension
+  PDF,
+
+  ///[OPENDOCSHEETS] for .ods extension
+  OPENDOCSHEETS,
+
+  ///[OPENDOCPRESENTATION] for .odp extension
+  OPENDOCPRESENTATION,
+
+  ///[OPENDOCTEXT] for .odt extension
+  OPENDOCTEXT,
+
+  ///[MICROSOFTWORD] for .docx extension
+  MICROSOFTWORD,
+
+  ///[MICROSOFTEXCEL] for .xlsx extension
+  MICROSOFTEXCEL,
+
+  ///[MICROSOFTPRESENTATION] for .pptx extension
+  MICROSOFTPRESENTATION,
+
+  ///[TEXT] for .txt extension
+  TEXT,
+
+  ///[CSV] for .csv extension
+  CSV,
+
+  ///[ASICE] for .asice
+  ASICE,
+
+  ///[ASICS] for .asice
+  ASICS,
+
+  ///[BDOC] for .asice
+  BDOC,
+
+  ///[OTHER] for other extension
+  OTHER
+}
+
+///[AndroidPathOptions] Class
+class AndroidPathOptions {
+  AndroidPathOptions(
+      {this.toDefaultDirectory = false, this.cleanCache = false});
+  bool toDefaultDirectory = false;
+  bool cleanCache = false;
+}
+
+///[String] _[getType] Method
+String getType(FileType type) {
+  switch (type) {
+    case FileType.WINDOWS_FILE:
+      return 'All Files (*.*)\x00*.*\x00\x00';
+    case FileType.WINDOWS_VIDEO:
+      return 'Videos (*.avi,*.flv,*.mkv,*.mov,*.mp4,*.mpeg,*.webm,*.wmv)\x00*.avi;*.flv;*.mkv;*.mov;*.mp4;*.mpeg;*.webm;*.wmv\x00\x00';
+    case FileType.WINDOWS_AUDIO:
+      return 'Audios (*.aac,*.midi,*.mp3,*.ogg,*.wav)\x00*.aac;*.midi;*.mp3;*.ogg;*.wav\x00\x00';
+    case FileType.WINDOWS_MEDIA:
+      return 'Videos (*.avi,*.flv,*.mkv,*.mov,*.mp4,*.mpeg,*.webm,*.wmv)\x00*.avi;*.flv;*.mkv;*.mov;*.mp4;*.mpeg;*.webm;*.wmv\x00Images (*.bmp,*.gif,*.jpeg,*.jpg,*.png)\x00*.bmp;*.gif;*.jpeg;*.jpg;*.png\x00\x00';
+    case FileType.WINDOWS_IMAGE:
+      return 'Images (*.bmp,*.gif,*.jpeg,*.jpg,*.png)\x00*.bmp;*.gif;*.jpeg;*.jpg;*.png\x00\x00';
+    case FileType.AVI:
+      return 'video/x-msvideo';
+    case FileType.AAC:
+      return 'audio/aac';
+    case FileType.BMP:
+      return 'image/bmp';
+    case FileType.EPUB:
+      return 'application/epub+zip';
+    case FileType.GIF:
+      return 'image/gif';
+    case FileType.JSON:
+      return 'application/json';
+    case FileType.MPEG:
+      return 'video/mpeg';
+    case FileType.MP3:
+      return 'audio/mpeg';
+    case FileType.JPEG:
+      return 'image/jpeg';
+    case FileType.OTF:
+      return 'font/otf';
+    case FileType.PNG:
+      return 'image/png';
+    case FileType.OPENDOCPRESENTATION:
+      return 'application/vnd.oasis.opendocument.presentation';
+    case FileType.OPENDOCTEXT:
+      return 'application/vnd.oasis.opendocument.text';
+    case FileType.OPENDOCSHEETS:
+      return 'application/vnd.oasis.opendocument.spreadsheet';
+    case FileType.PDF:
+      return 'application/pdf';
+    case FileType.TTF:
+      return 'font/ttf';
+    case FileType.ZIP:
+      return 'application/zip';
+    case FileType.MICROSOFTEXCEL:
+      return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    case FileType.MICROSOFTPRESENTATION:
+      return "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+    case FileType.MICROSOFTWORD:
+      return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+    case FileType.ASICE:
+      return "application/vnd.etsi.asic-e+zip";
+    case FileType.ASICS:
+      return "application/vnd.etsi.asic-s+zip";
+    case FileType.BDOC:
+      return "application/vnd.etsi.asic-e+zip";
+    case FileType.OTHER:
+      return "application/octet-stream";
+    case FileType.TEXT:
+      return 'text/plain';
+    case FileType.CSV:
+      return 'text/csv';
+    default:
+      return "application/octet-stream";
+  }
+}
+
+String joinPath(String fDir, String fPath) {
+  String value = '';
+  String path = Platform.isWindows
+      ? fPath.replaceAll("/", Platform.pathSeparator)
+      : fPath;
+  String dir =
+      Platform.isWindows ? fDir.replaceAll("/", Platform.pathSeparator) : fDir;
+  if (dir.endsWith(Platform.pathSeparator) &&
+      path.startsWith(Platform.pathSeparator)) {
+    value = dir + path.substring(1);
+  } else if (!dir.endsWith(Platform.pathSeparator) &&
+      !path.startsWith(Platform.pathSeparator)) {
+    value = dir + Platform.pathSeparator + path;
+  } else {
+    value = dir + path;
+  }
+  return value;
+}
+
+///[FilesModel] Class
+class FilesModel {
+  String _name = '', _value = '';
+  Uint8List? _data;
+
+  /// [String] getter [valueName]
+  String get valueName => _name;
+
+  /// [String] getter [value]
+  String get value => _value;
+
+  /// [Uint8List] getter [data]
+  Uint8List? get data => _data;
+
+  /// [FilesModel] Constructor
+  FilesModel([this._name = '', this._value = '', this._data]);
+
+  /// [FilesModel] Constructor
+  FilesModel.fromMap(var data) {
+    _name = data["01"].toString();
+    _value = data["02"].toString();
   }
 
-  ///[Future] method [saveFromPath]
-  ///takes the [String] path
-  ///return [String] value the path of savedFile
-  /// Or It Can return [String] ERROR From catch()
-  Future<String> saveFromPath({required String path}) async {
-    return JSaverPlatform.instance.saveFromPath(path: path);
+  /// [toMap] _[Map]
+  toMap() => {
+        "01": _name,
+        "02": _value,
+      };
+
+  ///an override [toString] _[String]
+  @override
+  String toString() {
+    return json.encode(toMap());
+  }
+}
+
+abstract class JSaver extends PlatformInterface {
+  /// Constructs a JSaverPlatform.
+  JSaver() : super(token: _token);
+
+  static final Object _token = Object();
+
+  static JSaver _instance = JSaver._setPlatform();
+
+  /// The default instance of [JSaverPlatform] to use.
+  ///
+  /// Defaults to [MethodChannelJSaver].
+  static JSaver get instance => _instance;
+
+  /// Platform-specific implementations should set this with their own
+  /// platform-specific class that extends [JSaverPlatform] when
+  /// they register themselves.
+  static set instance(JSaver instance) {
+    PlatformInterface.verifyToken(instance, _token);
+    _instance = instance;
+  }
+
+  factory JSaver._setPlatform() {
+    if (Platform.isAndroid) {
+      return JSaverAndroid();
+    } else if (Platform.isWindows) {
+      return jSaverFFI();
+    } else {
+      throw UnimplementedError(
+        'The current platform "${Platform.operatingSystem}" is not supported by this plugin.',
+      );
+    }
   }
 
   ///[Future] method [saveFromData]
-  ///takes [Uint8List] data and [String] name
-  ///[name] Must Contains .extension
-  ///return [String] value the path of savedFile
-  Future<String> saveFromData(
-      {required Uint8List data,
-      required String name,
-      FileType type = FileType.OTHER}) async {
-    return JSaverPlatform.instance
-        .saveFromData(data: data, name: name, type: type);
-  }
-
-  ///[Future] method [saveListOfFiles]
-  ///takes the [List] of [String] paths ,  and [List] of [File] files
-  ///and [List] of [FilesModel] dataList
+  ///takes the [Uint8List] bytes and [String] name and [FileType] type
   /// has [String] return Value
-  Future<String> saveListOfFiles(
-      {List<String> paths = const [],
-      List<File> files = const [],
-      List<FilesModel> dataList = const []}) async {
-    return JSaverPlatform.instance
-        .saveListOfFiles(paths: paths, files: files, dataList: dataList);
-  }
+  Future<String> saveFromData(
+          {required Uint8List data,
+          required String name,
+          FileType type = FileType.OTHER}) async =>
+      throw UnimplementedError('saveFromData() has not been implemented.');
+
+  ///[Future] method [grantAccessToDirectory]
+  /// has [FilesModel] return Value
+  Future<FilesModel> grantAccessToDirectory() async => throw UnimplementedError(
+      'grantAccessToDirectory() has not been implemented.');
+
+  ///[Future] method [getAccessedDirectories]
+  /// has [List] of [FilesModel] as return Value
+  Future<List<FilesModel>> getAccessedDirectories() async =>
+      throw UnimplementedError(
+          'getAccessedDirectories() has not been implemented.');
+
+  ///[Future] method [getDefaultSavingDirectory]
+  /// has [FilesModel] return Value
+  Future<FilesModel> getDefaultSavingDirectory() async =>
+      throw UnimplementedError(
+          'getDefaultSavingDirectory() has not been implemented.');
+
+  ///[Future] method [setDefaultSavingDirectory]
+  /// has [FilesModel] return Value
+  Future<FilesModel> setDefaultSavingDirectory() async =>
+      throw UnimplementedError(
+          'setDefaultSavingDirectory() has not been implemented.');
+
+  ///[Future] method [save]
+  ///has [String] _ [fromPath]
+  ///has [String] _ [toDirectory]
+  ///has [File] _ [fromFile]
+  ///has [FilesModel] _ [fromData]
+  ///has [List] of [String]_ [fromPaths]
+  ///has [List] of [File]_ [fromFiles]
+  ///has [List] of [FilesModel]_ [fromDataList]
+  ///has [AndroidPathOptions] _ [androidPathOptions]
+  /// has [List] of [FilesModel] return Value
+  Future<List<FilesModel>> save(
+          {String toDirectory = "",
+          String fromPath = "",
+          File? fromFile,
+          FilesModel? fromData,
+          List<String> fromPaths = const [],
+          List<File> fromFiles = const [],
+          List<FilesModel> fromDataList = const [],
+          AndroidPathOptions? androidPathOptions}) async =>
+      throw UnimplementedError('save() has not been implemented.');
+
+  ///[Future] method [getCacheDirectory]
+  /// has [String] return Value
+  Future<String> getCacheDirectory() async =>
+      throw UnimplementedError('getCacheDirectory() has not been implemented.');
+
+  ///[Future] method [cleanApplicationCache]
+  /// has [String] return Value
+  Future<String> cleanApplicationCache() async => throw UnimplementedError(
+      'cleanApplicationCache() has not been implemented.');
 }

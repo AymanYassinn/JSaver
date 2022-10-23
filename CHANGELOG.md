@@ -1,3 +1,11 @@
+## 1.1.0
+ Breaking Changes
+* Remove path dependency
+* Merge All Saving Methods, in one
+* Adding New Methods
+* Update Example
+
+
 ## 1.0.0
 * Adding New Method Save List Files
 * Update dependencies
