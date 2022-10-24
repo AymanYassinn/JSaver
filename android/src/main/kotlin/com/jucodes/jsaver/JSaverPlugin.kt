@@ -33,7 +33,10 @@ class JSaverPlugin: FlutterPlugin, ActivityAware, MethodCallHandler {
       this.result = result
       when (call.method) {
         "ClearCache" -> {
-          jSaverProvider!!.clearCacheDirectory(result)
+          val default = call.argument<Boolean>("default")
+          val accessed = call.argument<Boolean>("accessed")
+          val cache = call.argument<Boolean>("cache")
+          jSaverProvider!!.clearCacheDirectory(result, default!!, accessed!!, cache!!)
         }
            "SetDefaultPath" -> {
             jSaverProvider!!.setDefaultDirectory(result)

@@ -38,13 +38,13 @@ class JSaverWeb extends JSaver {
   }
 
   ///[Future] method [saveFromData]
-  ///takes the [Uint8List] bytes and [String] name and [FileType] type
+  ///takes the [Uint8List] bytes and [String] name and [JSaverFileType] type
   /// has [String] return Value
   @override
   Future<String> saveFromData(
       {required Uint8List data,
       required String name,
-      FileType type = FileType.OTHER}) async {
+      JSaverFileType type = JSaverFileType.OTHER}) async {
     try {
       final wVal = await _webSaver(data, name, "application/octet-stream");
       return wVal.toString();

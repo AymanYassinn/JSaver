@@ -124,7 +124,7 @@ class _MyAppState extends State<MyApp> {
             FloatingActionButton(
               heroTag: '7',
               onPressed: () async {
-                final val = await _jSaverPlugin.cleanApplicationCache();
+                final val = await _jSaverPlugin.cleanAppCacheDirs();
                 debugPrint(val.toString());
                 setState(() {
                   _savedFile = val.toString();

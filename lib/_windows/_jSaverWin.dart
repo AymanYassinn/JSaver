@@ -35,13 +35,13 @@ class JSaverWindows extends JSaver {
   String _baseType(String path) => path.substring(path.lastIndexOf("."));
 
   ///[Future] method [saveFromData]
-  ///takes the [Uint8List] bytes and [String] name and [FileType] type
+  ///takes the [Uint8List] bytes and [String] name and [JSaverFileType] type
   /// has [String] return Value
   @override
   Future<String> saveFromData(
       {required Uint8List data,
       required String name,
-      FileType type = FileType.WINDOWS_FILE}) async {
+      JSaverFileType type = JSaverFileType.WINDOWS_FILE}) async {
     try {
       if (data.isNotEmpty && name.isNotEmpty) {
         if (name.split(".").isNotEmpty) {
@@ -233,7 +233,7 @@ class JSaverWindows extends JSaver {
 
   Future<String> _saveFile({
     required String fileName,
-    FileType type = FileType.WINDOWS_FILE,
+    JSaverFileType type = JSaverFileType.WINDOWS_FILE,
   }) async {
     final comdlg32 = DynamicLibrary.open('comdlg32.dll');
     final getSaveFileNameW =
@@ -296,7 +296,7 @@ class JSaverWindows extends JSaver {
 
   Pointer<OPENFILENAMEW> _instantiateOpenFileNameW({
     String defaultFileName = "file",
-    FileType type = FileType.WINDOWS_FILE,
+    JSaverFileType type = JSaverFileType.WINDOWS_FILE,
   }) {
     const lpstrFileBufferSize = 8192 * maximumPathLength;
     final Pointer<OPENFILENAMEW> openFileNameW = calloc<OPENFILENAMEW>();

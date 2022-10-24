@@ -90,10 +90,20 @@ fun setDefaultDirectory(result: Result){
     this.jResult = result
     startActivityHome(SET_DEFAULT_PATH)
 }
-fun clearCacheDirectory(result: Result){
+fun clearCacheDirectory(result: Result, fCDefault:Boolean = false, fCAccessed: Boolean = false, fCCache:Boolean = true){
     this.jResult = result
-    val re = clearLCacheDirectory()
+
+    if(fCDefault){
+       jSharedPref.edit().remove(DIR_MAIN).apply()
+    }
+    if(fCAccessed){
+       jSharedPref.edit().remove(DIR_BOX).apply()
+    }
+    if(fCCache){
+        val re = clearLCacheDirectory()
         jResult?.success(re)
+    }
+
 }
 fun setAccessToDirectory(result: Result){
         this.jResult = result

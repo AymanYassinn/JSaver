@@ -7,7 +7,7 @@ import 'package:jsaver/_windows/_jStud.dart'
     if (dart.library.io) 'package:jsaver/_windows/_jSaverWin.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
-enum FileType {
+enum JSaverFileType {
   ///[WINDOWS_FILE] for .all extensions
   WINDOWS_FILE,
 
@@ -114,69 +114,69 @@ class AndroidPathOptions {
 }
 
 ///[String] _[getType] Method
-String getType(FileType type) {
+String getType(JSaverFileType type) {
   switch (type) {
-    case FileType.WINDOWS_FILE:
+    case JSaverFileType.WINDOWS_FILE:
       return 'All Files (*.*)\x00*.*\x00\x00';
-    case FileType.WINDOWS_VIDEO:
+    case JSaverFileType.WINDOWS_VIDEO:
       return 'Videos (*.avi,*.flv,*.mkv,*.mov,*.mp4,*.mpeg,*.webm,*.wmv)\x00*.avi;*.flv;*.mkv;*.mov;*.mp4;*.mpeg;*.webm;*.wmv\x00\x00';
-    case FileType.WINDOWS_AUDIO:
+    case JSaverFileType.WINDOWS_AUDIO:
       return 'Audios (*.aac,*.midi,*.mp3,*.ogg,*.wav)\x00*.aac;*.midi;*.mp3;*.ogg;*.wav\x00\x00';
-    case FileType.WINDOWS_MEDIA:
+    case JSaverFileType.WINDOWS_MEDIA:
       return 'Videos (*.avi,*.flv,*.mkv,*.mov,*.mp4,*.mpeg,*.webm,*.wmv)\x00*.avi;*.flv;*.mkv;*.mov;*.mp4;*.mpeg;*.webm;*.wmv\x00Images (*.bmp,*.gif,*.jpeg,*.jpg,*.png)\x00*.bmp;*.gif;*.jpeg;*.jpg;*.png\x00\x00';
-    case FileType.WINDOWS_IMAGE:
+    case JSaverFileType.WINDOWS_IMAGE:
       return 'Images (*.bmp,*.gif,*.jpeg,*.jpg,*.png)\x00*.bmp;*.gif;*.jpeg;*.jpg;*.png\x00\x00';
-    case FileType.AVI:
+    case JSaverFileType.AVI:
       return 'video/x-msvideo';
-    case FileType.AAC:
+    case JSaverFileType.AAC:
       return 'audio/aac';
-    case FileType.BMP:
+    case JSaverFileType.BMP:
       return 'image/bmp';
-    case FileType.EPUB:
+    case JSaverFileType.EPUB:
       return 'application/epub+zip';
-    case FileType.GIF:
+    case JSaverFileType.GIF:
       return 'image/gif';
-    case FileType.JSON:
+    case JSaverFileType.JSON:
       return 'application/json';
-    case FileType.MPEG:
+    case JSaverFileType.MPEG:
       return 'video/mpeg';
-    case FileType.MP3:
+    case JSaverFileType.MP3:
       return 'audio/mpeg';
-    case FileType.JPEG:
+    case JSaverFileType.JPEG:
       return 'image/jpeg';
-    case FileType.OTF:
+    case JSaverFileType.OTF:
       return 'font/otf';
-    case FileType.PNG:
+    case JSaverFileType.PNG:
       return 'image/png';
-    case FileType.OPENDOCPRESENTATION:
+    case JSaverFileType.OPENDOCPRESENTATION:
       return 'application/vnd.oasis.opendocument.presentation';
-    case FileType.OPENDOCTEXT:
+    case JSaverFileType.OPENDOCTEXT:
       return 'application/vnd.oasis.opendocument.text';
-    case FileType.OPENDOCSHEETS:
+    case JSaverFileType.OPENDOCSHEETS:
       return 'application/vnd.oasis.opendocument.spreadsheet';
-    case FileType.PDF:
+    case JSaverFileType.PDF:
       return 'application/pdf';
-    case FileType.TTF:
+    case JSaverFileType.TTF:
       return 'font/ttf';
-    case FileType.ZIP:
+    case JSaverFileType.ZIP:
       return 'application/zip';
-    case FileType.MICROSOFTEXCEL:
+    case JSaverFileType.MICROSOFTEXCEL:
       return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-    case FileType.MICROSOFTPRESENTATION:
+    case JSaverFileType.MICROSOFTPRESENTATION:
       return "application/vnd.openxmlformats-officedocument.presentationml.presentation";
-    case FileType.MICROSOFTWORD:
+    case JSaverFileType.MICROSOFTWORD:
       return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-    case FileType.ASICE:
+    case JSaverFileType.ASICE:
       return "application/vnd.etsi.asic-e+zip";
-    case FileType.ASICS:
+    case JSaverFileType.ASICS:
       return "application/vnd.etsi.asic-s+zip";
-    case FileType.BDOC:
+    case JSaverFileType.BDOC:
       return "application/vnd.etsi.asic-e+zip";
-    case FileType.OTHER:
+    case JSaverFileType.OTHER:
       return "application/octet-stream";
-    case FileType.TEXT:
+    case JSaverFileType.TEXT:
       return 'text/plain';
-    case FileType.CSV:
+    case JSaverFileType.CSV:
       return 'text/csv';
     default:
       return "application/octet-stream";
@@ -272,12 +272,12 @@ abstract class JSaver extends PlatformInterface {
   }
 
   ///[Future] method [saveFromData]
-  ///takes the [Uint8List] bytes and [String] name and [FileType] type
+  ///takes the [Uint8List] bytes and [String] name and [JSaverFileType] type
   /// has [String] return Value
   Future<String> saveFromData(
           {required Uint8List data,
           required String name,
-          FileType type = FileType.OTHER}) async =>
+          JSaverFileType type = JSaverFileType.OTHER}) async =>
       throw UnimplementedError('saveFromData() has not been implemented.');
 
   ///[Future] method [grantAccessToDirectory]
@@ -329,8 +329,14 @@ abstract class JSaver extends PlatformInterface {
   Future<String> getCacheDirectory() async =>
       throw UnimplementedError('getCacheDirectory() has not been implemented.');
 
-  ///[Future] method [cleanApplicationCache]
+  ///[Future] method [cleanAppCacheDirs]
+  ///take [bool] _ [cleanDefault]
+  ///take [bool] _ [cleanAccessedDirs]
+  ///take [bool] _ [cleanCache]
   /// has [String] return Value
-  Future<String> cleanApplicationCache() async => throw UnimplementedError(
-      'cleanApplicationCache() has not been implemented.');
+  Future<String> cleanAppCacheDirs(
+          {bool cleanDefault = false,
+          bool cleanAccessedDirs = false,
+          bool cleanCache = true}) async =>
+      throw UnimplementedError('cleanAppCacheDirs() has not been implemented.');
 }

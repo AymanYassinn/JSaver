@@ -236,13 +236,13 @@ class JSaverAndroid extends JSaver {
   }
 
   ///[Future] method [saveFromData]
-  ///takes the [Uint8List] bytes and [String] name and [FileType] type
+  ///takes the [Uint8List] bytes and [String] name and [JSaverFileType] type
   /// has [String] return Value
   @override
   Future<String> saveFromData(
           {required Uint8List data,
           required String name,
-          FileType type = FileType.OTHER}) async =>
+          JSaverFileType type = JSaverFileType.OTHER}) async =>
       throw UnimplementedError('saveFromData() Is Implemented For Web Only');
 
   ///[Future] method [getCacheDirectory]
@@ -257,11 +257,21 @@ class JSaverAndroid extends JSaver {
     }
   }
 
-  ///[Future] method [cleanApplicationCache]
+  ///[Future] method [cleanAppCacheDirs]
+  ///take [bool] _ [cleanDefault]
+  ///take [bool] _ [cleanAccessedDirs]
+  ///take [bool] _ [cleanCache]
   /// has [String] return Value
   @override
-  Future<String> cleanApplicationCache() async {
-    final vPath = await methodChannel.invokeMethod<String>(_CLEAN_CASH_PATH);
+  Future<String> cleanAppCacheDirs(
+      {bool cleanDefault = false,
+      bool cleanAccessedDirs = false,
+      bool cleanCache = true}) async {
+    final vPath = await methodChannel.invokeMethod<String>(_CLEAN_CASH_PATH, {
+      "accessed": cleanAccessedDirs,
+      "default": cleanDefault,
+      "cache": cleanCache
+    });
     if (vPath != null) {
       return vPath;
     } else {
