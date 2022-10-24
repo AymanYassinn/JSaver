@@ -92,18 +92,24 @@ fun setDefaultDirectory(result: Result){
 }
 fun clearCacheDirectory(result: Result, fCDefault:Boolean = false, fCAccessed: Boolean = false, fCCache:Boolean = true){
     this.jResult = result
-
+    var fCl = ""
+    var fCl0 = ""
+    var fCl1 = ""
     if(fCDefault){
        jSharedPref.edit().remove(DIR_MAIN).apply()
+        fCl = "Default,"
     }
     if(fCAccessed){
        jSharedPref.edit().remove(DIR_BOX).apply()
+        fCl0 = "Accessed,"
     }
     if(fCCache){
-        val re = clearLCacheDirectory()
-        jResult?.success(re)
-    }
+       clearLCacheDirectory()
+        fCl1 = "Cache"
 
+    }
+val fCl2 = "$fCl$fCl0$fCl1 Cleaned Successfully"
+    jResult?.success(fCl2)
 }
 fun setAccessToDirectory(result: Result){
         this.jResult = result
