@@ -41,6 +41,9 @@ class JSaverPlugin: FlutterPlugin, ActivityAware, MethodCallHandler {
            "SetDefaultPath" -> {
             jSaverProvider!!.setDefaultDirectory(result)
           }
+        "GetApplicationDirectory" -> {
+          jSaverProvider!!.getApplicationDirs(result)
+        }
            "GetDefaultPath" -> {
            jSaverProvider!!.getDefaultDirectory(result)
           }

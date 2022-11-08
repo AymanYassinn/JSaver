@@ -5,6 +5,7 @@ JSaver: Just An Amazing File Saver Plugin That Save Files To User Choice Directo
 ## Features
 - Set Default Directory For Saving
 - get Default Directory For Saving
+- get Application Directory
 - get Cache Directory & Clean Cache Directory
 - Save From List Of Files, Paths, FilesModel.
 - Save From File.

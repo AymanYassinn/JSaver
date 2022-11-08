@@ -132,6 +132,17 @@ class _MyAppState extends State<MyApp> {
               },
               child: const Icon(Icons.cleaning_services),
             ),
+            FloatingActionButton(
+              heroTag: '8',
+              onPressed: () async {
+                final val = await _jSaverPlugin.getApplicationDirectory();
+                debugPrint(val.toString());
+                setState(() {
+                  _savedFile = val;
+                });
+              },
+              child: const Icon(Icons.storage),
+            ),
           ],
         ),
       ),

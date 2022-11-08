@@ -14,6 +14,7 @@ const String _METHOD_CHANNEL = "JSAVER";
 ///[String] MethodName [_SAVER_MAIN]
 ///[String] MethodName [_GET_ACCESSED_DIR]
 ///[String] MethodName [_CLEAN_CASH_PATH]
+///[String] MethodName [_GET_APP_DIR]
 
 const String _SET_ACCESS = "SetAccessDirectory";
 const String _GET_CASH_PATH = "GetCashDirectory";
@@ -22,6 +23,7 @@ const String _GET_DEFAULT_PATH = "GetDefaultPath";
 const String _SET_DEFAULT_PATH = "SetDefaultPath";
 const String _SAVER_MAIN = "SaverMain";
 const String _GET_ACCESSED_DIR = "GetAccessedDirectories";
+const String _GET_APP_DIR = "GetApplicationDirectory";
 
 class JSaverAndroid extends JSaver {
   ///[String] method [_baseName] that takes the [String] path and return the name
@@ -254,6 +256,18 @@ class JSaverAndroid extends JSaver {
       return vPath;
     } else {
       return "Check Permissions";
+    }
+  }
+
+  ///[Future] method [getApplicationDirectory]
+  /// has [String] return Value
+  @override
+  Future<String> getApplicationDirectory() async {
+    final vPath = await methodChannel.invokeMethod<String>(_GET_APP_DIR);
+    if (vPath != null) {
+      return vPath;
+    } else {
+      return "S";
     }
   }
 

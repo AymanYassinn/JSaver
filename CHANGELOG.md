@@ -1,3 +1,5 @@
+## 1.2.0
+* Add getApplicationDirectory Method
 ## 1.1.3
 * Hot fix
 ## 1.1.2

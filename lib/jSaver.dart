@@ -339,4 +339,9 @@ abstract class JSaver extends PlatformInterface {
           bool cleanAccessedDirs = false,
           bool cleanCache = true}) async =>
       throw UnimplementedError('cleanAppCacheDirs() has not been implemented.');
+
+  ///[Future] method [getApplicationDirectory]
+  /// has [String] return Value
+  Future<String> getApplicationDirectory() async => throw UnimplementedError(
+      'getApplicationDirectories() has not been implemented.');
 }

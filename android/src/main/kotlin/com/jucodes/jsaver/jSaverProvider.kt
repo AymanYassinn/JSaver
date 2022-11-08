@@ -10,6 +10,7 @@ import android.provider.DocumentsContract.EXTRA_INITIAL_URI
 import androidx.documentfile.provider.DocumentFile
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.ActivityResultListener
+import io.flutter.util.PathUtils
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.File
@@ -129,6 +130,11 @@ fun getDefaultDirectory(result: Result){
 fun getCacheDirectory(result: Result) {
     this.jResult = result
     jResult?.success(activity.cacheDir.path)
+    }
+fun getApplicationDirs(result: Result) {
+        this.jResult = result
+    val vv = PathUtils.getDataDirectory(activity)
+        jResult?.success(vv)
     }
 fun getAccessedDirectories(result: Result) {
     this.jResult = result
