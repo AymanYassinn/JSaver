@@ -1,6 +1,6 @@
 # jsaver
 
-JSaver: Just An Amazing File Saver Plugin That Save Files To User Choice Directory On Android , Web & Windows.
+JSaver: Just An Amazing File Saver Plugin That Save Files To User Choice Directory On Android , Web , Linux & Windows.
 
 ## Features
 - Set Default Directory For Saving

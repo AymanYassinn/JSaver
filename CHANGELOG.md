@@ -1,3 +1,6 @@
+## 1.3.0
+* Adding Linux Support
+* Fix Save csv files issue
 ## 1.2.0
 * Add getApplicationDirectory Method
 ## 1.1.3

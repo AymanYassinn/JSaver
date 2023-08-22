@@ -2,12 +2,28 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:jsaver/_linux/_jSaverLinux.dart';
 import 'package:jsaver/_src/_jSaverAndroid.dart';
 import 'package:jsaver/_windows/_jStud.dart'
     if (dart.library.io) 'package:jsaver/_windows/_jSaverWin.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 enum JSaverFileType {
+  ///[LINUX_FILE] for .all extensions
+  LINUX_FILE,
+
+  ///[LINUX_VIDEO] for .videos extensions
+  LINUX_VIDEO,
+
+  ///[LINUX_IMAGE] for .images extensions
+  LINUX_IMAGE,
+
+  ///[LINUX_MEDIA] for .allMedia extensions
+  LINUX_MEDIA,
+
+  ///[LINUX_AUDIO] for .audio extensions
+  LINUX_AUDIO,
+
   ///[WINDOWS_FILE] for .all extensions
   WINDOWS_FILE,
 
@@ -116,6 +132,16 @@ class AndroidPathOptions {
 ///[String] _[getType] Method
 String getType(JSaverFileType type) {
   switch (type) {
+    case JSaverFileType.LINUX_FILE:
+      return 'All Files (*.*)\x00*.*\x00\x00';
+    case JSaverFileType.LINUX_VIDEO:
+      return 'Video File (*.avi *.flv *.mkv *.mov *.mp4 *.mpeg *.webm *.wmv)';
+    case JSaverFileType.LINUX_AUDIO:
+      return 'Audio File (*.aac *.midi *.mp3 *.ogg *.wav)';
+    case JSaverFileType.LINUX_MEDIA:
+      return 'Media File (*.avi *.flv *.mkv *.mov *.mp4 *.mpeg *.webm *.wmv *.bmp *.gif *.jpeg *.jpg *.png)';
+    case JSaverFileType.LINUX_IMAGE:
+      return 'Image File (*.bmp *.gif *.jpeg *.jpg *.png)';
     case JSaverFileType.WINDOWS_FILE:
       return 'All Files (*.*)\x00*.*\x00\x00';
     case JSaverFileType.WINDOWS_VIDEO:
@@ -264,6 +290,8 @@ abstract class JSaver extends PlatformInterface {
       return JSaverAndroid();
     } else if (Platform.isWindows) {
       return jSaverFFI();
+    } else if (Platform.isLinux) {
+      return JSaverLinux();
     } else {
       throw UnimplementedError(
         'The current platform "${Platform.operatingSystem}" is not supported by this plugin.',

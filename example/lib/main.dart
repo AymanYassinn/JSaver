@@ -98,6 +98,8 @@ class _MyAppState extends State<MyApp> {
             FloatingActionButton(
               heroTag: '6',
               onPressed: () async {
+                //final vv = await FilePicker.platform.saveFile(dialogTitle: "Hello",fileName: "hell.docx");
+                // print(vv);
                 final val = await saveAll();
                 if (val.isNotEmpty) {
                   for (var i in val) {
@@ -170,7 +172,9 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<List<FilesModel>> saveAll() async {
-    await Permission.storage.request();
+    if (!Platform.isLinux) {
+      await Permission.storage.request();
+    }
     final val = await FilePicker.platform.pickFiles(allowMultiple: true);
     if (val != null) {
       if (val.paths.isNotEmpty || val.files.isNotEmpty) {
@@ -187,7 +191,6 @@ class _MyAppState extends State<MyApp> {
           if (i.path != null) {
             final vF = File(i.path!);
             files.add(vF);
-
             filesData.add(FilesModel(
                 vF.path
                     .substring(vF.path.lastIndexOf(Platform.pathSeparator) + 1),
@@ -203,7 +206,7 @@ class _MyAppState extends State<MyApp> {
           fromPaths: paths,
           fromDataList: filesData,
           // toDirectory: "D:/NewFolder/Folder",
-          toDirectory: "/storage/emulated/0/TargetFolder",
+          //toDirectory: "/storage/emulated/0/TargetFolder",
           androidPathOptions: AndroidPathOptions(
             cleanCache: true,
             toDefaultDirectory: false,
